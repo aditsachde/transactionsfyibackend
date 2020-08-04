@@ -15,7 +15,7 @@ export const plaidClient = new plaid.Client({
   },
 });
 
-export const runtimeOpts = {
+const runtimeOpts = {
   timeoutSeconds: 30,
   memory: '128MB' as const
 }

@@ -1,11 +1,15 @@
-
 import * as functions from 'firebase-functions';
-import { db, plaidClient, runtimeOpts } from './utils'
-import { transactionDefaultUpdateInterface } from './types'
+import { db, plaidClient, customFunctions } from '../utils/utils'
+import { transactionDefaultUpdateInterface } from '../utils/types'
 import axios from 'axios'
 
-exports.webhooks = functions.runWith(runtimeOpts)
-    .firestore.document('webhooks/{documentId}')
+exports.webhook = customFunctions.https.onRequest(async (req, res) => {
+    await db.collection('plaidhook').add(req.body)
+    res.status(200)
+})
+
+exports.processWebhook = customFunctions
+    .firestore.document('plaidhook/{documentId}')
     .onCreate(async (snap, context) => {
         var webhook = snap.data()
         if (webhook.webhook_type === "TRANSACTIONS") {
@@ -24,10 +28,10 @@ var transactionDefaultUpdate = async (webhook: transactionDefaultUpdateInterface
 
     var date = new Date()
     var year = date.getUTCFullYear()
-    var month = (date.getUTCMonth()+1).toString().padStart(2, "0")
-    var day = (date.getUTCDate()+1).toString().padStart(2, "0")
+    var month = (date.getUTCMonth() + 1).toString().padStart(2, "0")
+    var day = (date.getUTCDate() + 1).toString().padStart(2, "0")
 
-    var start = `${year-2}-${month}-${day}`
+    var start = `${year - 2}-${month}-${day}`
     var end = `${year}-${month}-${day}`
     console.log(start, " ", end)
 
@@ -36,5 +40,5 @@ var transactionDefaultUpdate = async (webhook: transactionDefaultUpdateInterface
     })
 
     functions.logger.info('posting webhook')
-    await axios.post(user.webhook_url, transactions)
+    await axios.post(user.webhookUrl, transactions)
 }
