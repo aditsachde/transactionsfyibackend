@@ -16,7 +16,7 @@
   "dependencies": {
     "@types/yup": "^0.29.3",
     "axios": "^0.19.2",
-    "firebase-admin": "^8.10.0",
+    "firebase-admin": "^11.4.1",
     "firebase-functions": "^3.6.1",
     "plaid": "^6.0.0",
     "stripe": "^8.81.0",
